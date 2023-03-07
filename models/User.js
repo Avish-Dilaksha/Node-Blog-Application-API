@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Please provide email']
     },
     password: {
-        trype: String,
+        type: String,
         required: [true, 'Please provide password'],
         minlength: 3
     }
