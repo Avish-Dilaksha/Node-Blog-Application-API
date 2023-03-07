@@ -1,0 +1,1 @@
+In this project my aim is to build a social media bakcend REST API with node / express / MongoDB.
