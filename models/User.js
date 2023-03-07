@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide password'],
         minlength: 3
-    }
+    },
+    blogs: [{type: mongoose.Types.ObjectId, ref: 'Blogs'}]
 })
 
 module.exports = mongoose.model('User', UserSchema)
