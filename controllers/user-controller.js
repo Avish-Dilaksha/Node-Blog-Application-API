@@ -7,7 +7,7 @@ const bycrypt = require('bcryptjs')
 const User = require('../models/User')
 
 const getAllUsers = asyncWrapper( async (req, res, next) => {
-    const users = await User.find({})
+    const users = await User.find()
     if(!users) {
         throw new NotFound('No users found', StatusCodes.NOT_FOUND)
     }
@@ -27,6 +27,7 @@ const signUp = asyncWrapper( async(req, res, next) => {
         name,
         email,
         password: hashedPassword,
+        blogs: []
     })
     await user.save()
      res.status(StatusCodes.CREATED).json({user})
