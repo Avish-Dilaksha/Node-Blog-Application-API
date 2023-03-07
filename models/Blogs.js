@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const BlodSchema = new mongoose.model({
+const BlogSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -13,9 +13,10 @@ const BlodSchema = new mongoose.model({
         type: String,
     },
     user: {
-        type: String,
+        type: mongoose.Types.ObjectId,
+        ref: "User",
         required: true
     }
 })
 
-module.exports = mongoose.model('Blogs', BlodSchema)
+module.exports = mongoose.model('Blogs', BlogSchema)
