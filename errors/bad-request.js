@@ -7,3 +7,5 @@ class BadRequest extends CustomError {
         this.statusCode = StatusCodes.BAD_REQUEST
     }
 }
+
+module.exports = BadRequest
