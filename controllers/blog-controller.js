@@ -29,21 +29,21 @@ const postBlog = asyncWrapper( async(req,res,next) => {
     })
     const session = await mongoose.startSession()
     session.startTransaction()
-    await blog.save({})
-    exsistingUser.Blogs.push(blog)
-    await exsistingUser.save({session})
+    await blog.save({ session })
+    exsistingUser.blogs.push(blog)
+    await exsistingUser.save({ session })
     await session.commitTransaction()
 
     res.status(StatusCodes.CREATED).json({blog})
 })
 
 const getBlog = asyncWrapper(async (req,res,next)=> {
-    const { id:blogID } = req.params
+    const { id:blogId } = req.params
     const blog = await Blogs.findOne({
-        _id:blogID
+        _id:blogId
     })
     if(!blog) {
-        throw new NotFoundError(`No job with id ${blogId}`)
+        throw new NotFound(`No job with id ${blogId}`)
     }
     res.status(StatusCodes.OK).json({blog})
 })
@@ -58,7 +58,7 @@ const updateBlog = asyncWrapper(async (req,res,next) => {
         throw new BadRequest('title or description cannot be empty')
     }
 
-    const blog = await Blogs.findByIdAndUpdate({id:blogID}, req.body, {
+    const blog = await Blogs.findByIdAndUpdate({_id:blogID}, req.body, {
         new: true,
         runValidators: true
     })
@@ -75,11 +75,23 @@ const deleteBlog = asyncWrapper( async (req, res, next) => {
 
     const blog = await Blogs.findByIdAndRemove({
         _id:blogId
-    })
+    }).populate('user')
+    await blog.user.blogs.pull(blog)
+    await blog.user.save()
     if(!blog) {
-        throw new NotFoundError(`No job with id ${blogId}`)
+        throw new NotFound(`No job with id ${blogId}`)
     }
     res.status(StatusCodes.OK).send()
+})
+
+const getBlogsOfUser = asyncWrapper( async (req,res,next) => {
+    const { id:userId } = req.params
+    const userBlogs = await User.findById({_id:userId}).populate('blogs')
+    if(!userBlogs) {
+        throw new NotFound(`No blogs found of user id : ${userId}`)
+    }
+
+    res.status(StatusCodes.OK).json({blogs: userBlogs})
 })
 
 module.exports = { 
@@ -87,5 +99,6 @@ module.exports = {
     postBlog,
     updateBlog,
     getBlog,
-    deleteBlog
+    deleteBlog,
+    getBlogsOfUser,
 }
